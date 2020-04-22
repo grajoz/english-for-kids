@@ -1,0 +1,44 @@
+.header {
+    top: 0px;
+    position: fixed;
+    margin-top: 5px;
+    margin-bottom: 15px;
+    padding: 10px;
+    display: block;
+    max-width: 1200px;
+    width: 100%;
+    background: #BCD0E5 ;
+    z-index: 10;
+    text-align: center;
+
+}
+
+.header-container {
+    width: 100%;
+    display: grid;
+    grid-template-areas: "1fr 1fr 1fr";
+    justify-content:space-between;
+}
+
+.nav {
+    display: none;
+    width: 250px;
+    position: fixed;
+    z-index: 10;
+    background: #BCD0E5;
+
+}
+
+.nav-active {
+    display: block;
+}
+
+.nav__li {
+    margin: 15px; 
+    cursor: pointer;
+}
+
+.nav__li-active {
+     background: rgb(238, 217, 134);;
+}
+
