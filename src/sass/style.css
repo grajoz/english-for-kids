@@ -465,6 +465,26 @@ button {
   backface-visibility: hidden;
 }
 
+.novisual {
+  display: none;
+}
+
+.stop {
+  background: #a54646;
+}
+
+.start {
+  background: #5ec75e;
+}
+
+.train_them {
+  background: #BCD0E5;
+}
+
+.game_them {
+  background: #e7bb9f;
+}
+
 .category {
   margin-top: 80px;
   display: grid;
@@ -487,6 +507,7 @@ button {
 }
 
 .category__card {
+  background: #e7e7a0;
   transform-style: preserve-3d;
   margin: 14px;
   border: 1px solid #343434;
@@ -573,7 +594,6 @@ button {
   display: block;
   max-width: 1200px;
   width: 100%;
-  background: #BCD0E5;
   z-index: 10;
   text-align: center;
 }

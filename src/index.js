@@ -1,7 +1,6 @@
 //import Card from './card.js';
 //import cards from './cards.js';
-
-
+//import CardGame from './cardgame.js';
 
 
 const cards = [ 
@@ -416,27 +415,125 @@ const cards = [
 ]
 
 
-
-
-
-
-
-
-
 const CATELORY_TITLES = cards[0];
-const NAV_BUTTON = document.getElementById('header-container__button_hamburger');
+const NAV_BUTTON = document.getElementById('button_hamburger');
 const NAV = document.getElementById('nav');
 const CATEGORY = document.getElementById('category');
+const HEADER = document.getElementById('header');
 let activeCategory = 'Main Page';
 let activeCategoryNumber = 0;
 let isNavOpen = false;
+let isTrainStation = true;
+let isRunGameStation = false;
+
+HEADER.addEventListener('click', (event) => {
+  let idClickElement;
+  idClickElement = event.target.getAttribute('id');
+
+  switch (idClickElement) {
+    case 'button_hamburger':
+      switchNavMenuOpen();
+      NAV.classList.toggle('nav-active');
+      break;
+    case 'button_start_repeat': switchStartRepeat();
+      break;
+    case 'button_train': startTrainStation();
+
+      break;
+    case 'button_play': startGameStation();
+
+      break;
+  }
+});
+
+function switchStartRepeat() {
+  switch (isRunGameStation) {
+    case true: repeatWord();
+      break;
+    case false: isRunGameStation = true;
+      runGame();
+      break;
+  }
+}
+
+
+function repeatWord() {
+
+}
+
+
+function runGame() {
+  console.log(activeCategoryNumber)
+  if (activeCategoryNumber===0){return}
+   let buttonStartRepeat= document.getElementById('button_start_repeat');
+   buttonStartRepeat.textContent='REPEAT';
+   console.log( buttonStartRepeat    )
+
+
+}
+
+
+function startGameStation() {
+  if (activeCategoryNumber===0) {generateMainPage()} else{
+  generateCardsForGame();
+  }
+  isTrainStation = false;
+  document.getElementById('button_start_repeat').classList.remove('novisual');
+
+  document.getElementById('button_train').classList.remove('start');
+  document.getElementById('button_train').classList.add('stop');
+  document.getElementById('button_play').classList.remove('stop');
+  document.getElementById('button_play').classList.add('start');
+
+  document.getElementById('button_play').setAttribute('disabled', 'disabled');
+  document.getElementById('button_train').removeAttribute('disabled');
+
+  document.getElementById('header').classList.remove('train_them');
+  document.getElementById('header').classList.add('game_them');
+
+  document.getElementById('category').classList.remove('train_them');
+  document.getElementById('category').classList.add('game_them');
+}
+
+function startTrainStation() {
+  if (activeCategoryNumber===0) {generateMainPage()} else{
+    generateCardsForGame();
+    }
+
+  isTrainStation = true;
+  document.getElementById('button_start_repeat').classList.add('novisual');
+
+  document.getElementById('button_play').classList.remove('start');
+  document.getElementById('button_play').classList.add('stop');
+  document.getElementById('button_train').classList.remove('stop');
+  document.getElementById('button_train').classList.add('start');
+
+  document.getElementById('button_train').setAttribute('disabled', 'disabled');
+  document.getElementById('button_play').removeAttribute('disabled');
+
+  document.getElementById('header').classList.add('train_them');
+  document.getElementById('header').classList.remove('game_them');
+
+  document.getElementById('category').classList.add('train_them');
+  document.getElementById('category').classList.remove('game_them');
+}
+
 
 CATEGORY.addEventListener('click', (event) => {
+  switch (isTrainStation) {
+    case true: selectInTrainStation();
+      break;
+    case false: selectInGameStation();
+      break;
+  }
+});
+
+
+function selectInTrainStation() {
   let dataClickElement;
   let tegClickElement;
   dataClickElement = event.target.getAttribute('data');
   tegClickElement = event.target.closest('div');
-
   switch (dataClickElement) {
     case 'mainpage': activeCategory = tegClickElement.textContent;
       getActiveCategoryNumber();
@@ -450,7 +547,7 @@ CATEGORY.addEventListener('click', (event) => {
     case 'statistics': generateStatistics();
       break;
   }
-});
+}
 
 function rotateCard() {
   let targetRotateCard;
@@ -503,18 +600,13 @@ function speakWord() {
 }
 
 
-NAV_BUTTON.addEventListener('click', (event) => { 
-  switchNavMenuOpen();
-  NAV.classList.toggle('nav-active');
-});
-
 function switchNavMenuOpen() {
   switch (isNavOpen) {
     case false: isNavOpen = true;
-      document.getElementById('header-container__button_hamburger').textContent = 'X';
+      document.getElementById('button_hamburger').textContent = 'X';
       break;
     case true: isNavOpen = false;
-      document.getElementById('header-container__button_hamburger').textContent = '|||';
+      document.getElementById('button_hamburger').textContent = '|||';
       break;
   }
 }
@@ -540,7 +632,7 @@ function setNavLiActive() {
 setNavLiActive();
 
 NAV.addEventListener('click', (event) => {
-  document.getElementById('header-container__button_hamburger').textContent = '|||';
+  document.getElementById('button_hamburger').textContent = '|||';
   NAV.classList.remove('nav-active');
   activeCategory = event.target.textContent;
   getActiveCategoryNumber();
@@ -576,7 +668,9 @@ function getActiveCategoryNumber() {
 
 function generateMainPage() {
   document.getElementById('category').innerHTML = '';
+
   for (let i = 1; i < CATELORY_TITLES.length; i++) {
+
     const category = document.getElementById('category');
     const card = document.createElement('div');
     const img = document.createElement('img');
@@ -615,7 +709,70 @@ function generateCards() {
   }
 }
 
+function generateCardsForGame() {
+  const cardObjArray = cards[activeCategoryNumber];
+  document.getElementById('category').innerHTML = '';
+  const progressField = document.createElement('div');
+  progressField.className = 'progressField';
+  progressField.setAttribute('id', 'progressField');
 
+  for (let i = 0; i < cardObjArray.length; i++) {
+    const CardForGenerate = new CardGame(cardObjArray[i]);
+    CardForGenerate.cardBuild();
+  }
+}
+
+
+class CardGame {
+  constructor(cardObj) {
+    this.cardObj = cardObj;
+  }
+
+  cardBuild() {
+    const cardText = this.cardObj.word;
+    const imgLink = this.cardObj.image;
+    const { audioSrc } = this.cardObj;
+    const { translation } = this.cardObj;
+
+    const category = document.getElementById('category');
+   const card = document.createElement('div');
+    //const cardFont = document.createElement('div');
+   // const cardBack = document.createElement('div');
+    const img = document.createElement('img');
+  //  const imgBack = document.createElement('img');
+  //  const rotateIcon = document.createElement('div');
+
+    img.setAttribute('data', 'card');
+    card.setAttribute('data', 'card');
+    card.setAttribute('audioSrc', `src/${audioSrc}`);
+  //  rotateIcon.setAttribute('data', 'rotate');
+
+
+  //  rotateIcon.className = ('rotate-icon');
+    card.className = ('category__card');
+    img.className = 'card__img';
+   // imgBack.className = 'card__img';
+    //cardFont.className = ('font');
+   // cardBack.className = ('back novisual');
+
+    img.setAttribute('alt', cardText);
+ //   imgBack.setAttribute('alt', translation);
+    img.setAttribute('src', `src/${imgLink}`);
+ //   imgBack.setAttribute('src', `src/${imgLink}`);
+
+    //cardFont.appendChild(img);
+    card.appendChild(img);
+
+   // cardBack.appendChild(imgBack);
+   // imgBack.after(translation);
+
+   // card.appendChild(cardFont);
+  //  cardFont.after(cardBack);
+  //  cardBack.after(rotateIcon);
+
+    category.appendChild(card);
+  }
+}
 
 class Card {
   constructor(cardObj) {
@@ -667,4 +824,3 @@ class Card {
     category.appendChild(card);
   }
 }
-
